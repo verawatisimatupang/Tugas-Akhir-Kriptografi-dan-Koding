@@ -1,6 +1,8 @@
+import hashlib
 from tkinter import Tk, Canvas, Button, Entry, messagebox, Checkbutton, END
 import tkinter as Tk
 import psycopg2
+from datetime import datetime
 
 class RegisterPage(Tk.Frame):
     def __init__(self, master, pageManager):
@@ -210,6 +212,7 @@ class RegisterPage(Tk.Frame):
             cursor.execute(query, values)
             connection.commit()
             
+            # print(self.generate_otp())
             messagebox.showinfo("Success", "Registration succefully")
             self.clear()
             
@@ -226,5 +229,12 @@ class RegisterPage(Tk.Frame):
         self.entry_4.delete(0, END)
         self.entry_5.delete(0, END)
 
+    def generate_otp(self):
+        input_string = self.entry_1.get() + self.entry_2.get() + self.entry_3.get() + self.entry_4.get() + self.entry_5.get() + str(datetime.now())
+        hashed_string = hashlib.sha256(input_string.encode()).hexdigest()
+        otp = hashed_string[:6]
+        numeric_otp = int(otp, 16) % 1000000
+        return numeric_otp
+    
     def startPage(self):
         self.mainloop()
