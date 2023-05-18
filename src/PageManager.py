@@ -1,5 +1,5 @@
 from tkinter import Tk
-import Splash, Login, Register, Home, CashWithdrawal
+import Splash, Login, Register, Home, CashWithdrawal, VerifyRegisterOtp
 
 class PageManager():
     def __init__(self):
@@ -33,4 +33,8 @@ class PageManager():
     
     def CashWithdrawal(self):
         self.page = CashWithdrawal.CashWithdrawalPage(master = self.window, pageManager = self)
+        self.page.startPage()
+    
+    def VerifyRegisterOtp(self):
+        self.page = VerifyRegisterOtp.VerifyRegisterOtpPage(master = self.window, pageManager = self)
         self.page.startPage()
