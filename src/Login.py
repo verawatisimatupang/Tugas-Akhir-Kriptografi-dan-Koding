@@ -1,4 +1,5 @@
 from pathlib import Path
+import re
 from tkinter import Checkbutton, Tk, Canvas, Button, Entry, messagebox
 import tkinter as Tk
 from PIL import Image, ImageTk
@@ -135,23 +136,29 @@ class LoginPage(Tk.Frame):
             )
             
             cursor = connection.cursor()
-            cursor.execute("SELECT * FROM datapengguna WHERE username = %s AND password = %s", (self.entry_1.get(), self.entry_2.get()))
+            email_pattern = r"[^@]+@[^@]+\.[^@]+"
 
-            user = cursor.fetchone()
-
-            if user:
-                query = "INSERT INTO datalogin (username, password, login_time) VALUES (%s, %s, %s)"
-                values = (
-                    self.entry_1.get(),
-                    self.entry_2.get(),
-                    datetime.now()
-                )
-                cursor.execute(query, values)
-                connection.commit() 
-                self.origin.Home()
-                # Perform any desired action after successful login
+            if not re.match(email_pattern, self.entry_2.get()):
+                messagebox.showerror("Error", "Email tidak valid")
+            elif self.entry_1.get() == "" or self.entry_2.get() == "":
+                messagebox.showerror("Error", "Tolong isi semua input")
             else:
-                messagebox.showerror("Error", "Invalid username or password")
+                cursor.execute("SELECT * FROM datapengguna WHERE username = %s AND password = %s", (self.entry_1.get(), self.entry_2.get()))
+
+                user = cursor.fetchone()
+
+                if user:
+                    query = "INSERT INTO datalogin (username, password, login_time) VALUES (%s, %s, %s)"
+                    values = (
+                        self.entry_1.get(),
+                        self.entry_2.get(),
+                        datetime.now()
+                    )
+                    cursor.execute(query, values)
+                    connection.commit() 
+                    self.origin.Home()
+                else:
+                    messagebox.showerror("Error", "Invalid username or password")
 
         except (Exception, psycopg2.Error) as error:
             print("Error while connecting to PostgreSQL", error)
