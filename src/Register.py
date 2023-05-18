@@ -3,6 +3,7 @@ from tkinter import Tk, Canvas, Button, Entry, messagebox, Checkbutton, END
 import tkinter as Tk
 import psycopg2
 from datetime import datetime
+import re
 
 class RegisterPage(Tk.Frame):
     def __init__(self, master, pageManager):
@@ -175,7 +176,7 @@ class RegisterPage(Tk.Frame):
             x=240.0,
             y=375.0,
         )
-
+        
     def show_password_1(self):
         if self.entry_4.cget('show') == "*":
             self.entry_4.config(show='')
@@ -187,6 +188,9 @@ class RegisterPage(Tk.Frame):
             self.entry_5.config(show='')
         else:
             self.entry_5.config(show="*")
+    
+    def get_register_time(self):
+        return datetime.now()
 
     def registration_done(self):
         try:
@@ -199,25 +203,37 @@ class RegisterPage(Tk.Frame):
             )
             
             cursor = connection.cursor()
-            
-            query = "INSERT INTO datapengguna (nomor_rekening, email, username, password, pin) VALUES (%s, %s, %s, %s, %s)"
-            values = (
-                self.entry_1.get(),
-                self.entry_2.get(),
-                self.entry_3.get(),
-                self.entry_4.get(),
-                self.entry_5.get()
-            )
-            
-            cursor.execute(query, values)
-            connection.commit()
-            
-            # print(self.generate_otp())
-            messagebox.showinfo("Success", "Registration succefully")
-            self.clear()
-            
-            cursor.close()
-            connection.close()
+            email_pattern = r"[^@]+@[^@]+\.[^@]+"
+
+            if not self.entry_1.get().isdigit():
+                messagebox.showerror("Error", "Nomor rekening harus berupa angka")
+            elif not re.match(email_pattern, self.entry_2.get()):
+                messagebox.showerror("Error", "Email tidak valid")
+            elif len(self.entry_5.get()) != 6:
+                messagebox.showerror("Error", "PIN harus terdiri dari 6 digit")
+            elif self.entry_1.get() == "" or self.entry_2.get() == "" or self.entry_3.get() == "" or self.entry_4.get() == "" or self.entry_5.get() == "":
+                messagebox.showerror("Error", "Tolong isi semua input")
+            else:
+                query = "INSERT INTO datapengguna (nomor_rekening, email, username, password, pin, otp, register_time) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+                values = (
+                    self.entry_1.get(),
+                    self.entry_2.get(),
+                    self.entry_3.get(),
+                    self.entry_4.get(),
+                    self.entry_5.get(),
+                    self.generate_otp(),
+                    self.get_register_time()
+                )
+                
+                cursor.execute(query, values)
+                connection.commit()
+                
+                self.clear()
+                messagebox.showinfo("Success", "Your OTP is " + str(values[5]) + ". Please input OTP in 5 minutes")
+                self.origin.VerifyRegisterOtp()
+                cursor.close()
+                connection.close()
+
         except (Exception, psycopg2.Error) as error:
             print("Error while connecting to PostgreSQL", error)
             messagebox.showerror("Error", "An error occurred while saving data to the database")
@@ -230,7 +246,7 @@ class RegisterPage(Tk.Frame):
         self.entry_5.delete(0, END)
 
     def generate_otp(self):
-        input_string = self.entry_1.get() + self.entry_2.get() + self.entry_3.get() + self.entry_4.get() + self.entry_5.get() + str(datetime.now())
+        input_string = self.entry_1.get() + self.entry_2.get() + self.entry_3.get() + self.entry_4.get() + self.entry_5.get() + str(self.get_register_time())
         hashed_string = hashlib.sha256(input_string.encode()).hexdigest()
         otp = hashed_string[:6]
         numeric_otp = int(otp, 16) % 1000000
