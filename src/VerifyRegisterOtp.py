@@ -41,14 +41,10 @@ class VerifyRegisterOtpPage(Tk.Frame):
             font=("MontserratRoman SemiBold", 30 * -1)
         )
 
-        # Open and resize the image
         image_path = relative_to_assets("otp.png")
         image = Image.open(image_path)
         resized_image = image.resize((200, 150))  # Adjust the desired width and height
-
-        # Convert the resized image to a format compatible with Tkinter
         self.image_login = ImageTk.PhotoImage(resized_image)
-
         self.login = self.canvas.create_image(
             200.0,
             170.0,
@@ -57,8 +53,8 @@ class VerifyRegisterOtpPage(Tk.Frame):
 
         self.entry_1 = Entry(
             bd=0,
-            bg="#FA8072",
-            fg="#FFFFFF",
+            bg="#BCD9EA",
+            fg="#000000",
             highlightthickness=0,
             insertbackground = "#000000",
             font=("MontserratRoman SemiBold", 12 * -1)
@@ -70,7 +66,7 @@ class VerifyRegisterOtpPage(Tk.Frame):
             height=30.0
         )
 
-        self.b1 = Button(text="Submit", bg='#FA8072', command=self.verify_otp)
+        self.b1 = Button(text="Submit", bg='#026AA7', command=self.verify_otp)
         self.b1.place(
             x=140.0,
             y=480.0,
@@ -87,20 +83,15 @@ class VerifyRegisterOtpPage(Tk.Frame):
                 password="postgres",
                 port=5432
             )
-            
             cursor = connection.cursor()
-
-            logged_in_account_query = "SELECT username FROM datapengguna ORDER BY username DESC LIMIT 1"
+            logged_in_account_query = "SELECT username FROM datapengguna ORDER BY register_time DESC LIMIT 1"
             cursor.execute(logged_in_account_query)
             logged_in_account = cursor.fetchone()[0]
-            
             query = f"SELECT otp, register_time FROM datapengguna where username = '{logged_in_account}'"
             cursor.execute(query)
             result = cursor.fetchone()
-
             otp_time = result[1]
             current_time = datetime.now()
-
             if result[0] == str(self.entry_1.get()) and current_time < otp_time + timedelta(minutes=5) :
                 self.clear()
                 messagebox.showinfo("Success", "Registration successfully")
@@ -110,11 +101,11 @@ class VerifyRegisterOtpPage(Tk.Frame):
                 messagebox.showwarning("Times Up", "Registration failed")
                 delete_query = f"DELETE FROM datapengguna where username = '{logged_in_account}'"
                 cursor.execute(delete_query)
+                connection.commit()
                 self.origin.Register()
             elif result[0] != str(self.entry_1.get()) :
                 self.clear()
                 messagebox.showerror("Error", "Invalid otp")
-
         except (Exception, psycopg2.Error) as error:
             print("Error while connecting to PostgreSQL", error)
             messagebox.showerror("Error", "An error occurred while saving data to the database")
