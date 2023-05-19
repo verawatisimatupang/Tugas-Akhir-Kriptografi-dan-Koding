@@ -221,9 +221,6 @@ class CashWithdrawalPage(Tk.Frame):
                 otp_time = values[6]
                 current_time = datetime.now()
                 if current_time < otp_time + timedelta(minutes=5) :
-                    delete_query = f"DELETE FROM datatransaksi where username = '{self.get_logged_in_account()}'"
-                    cursor.execute(delete_query)
-                    connection.commit()
                     self.origin.Home()
                 elif current_time > otp_time + timedelta(minutes=5) :
                     messagebox.showwarning("Times Up", "Registration failed")
