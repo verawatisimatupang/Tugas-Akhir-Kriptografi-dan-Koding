@@ -39,21 +39,17 @@ class HomePage(Tk.Frame):
             font=("MontserratRoman SemiBold", 30 * -1)
         )
 
-        # Open and resize the image
         image_path = relative_to_assets("saving.png")
         image = Image.open(image_path)
         resized_image = image.resize((250, 200))  # Adjust the desired width and height
-
-        # Convert the resized image to a format compatible with Tkinter
         self.image_login = ImageTk.PhotoImage(resized_image)
-
         self.login = self.canvas.create_image(
             200.0,
             200.0,
             image=self.image_login
         )
 
-        self.b1 = Button(text="Tarik Tunai", bg='#FA8072', command=lambda: self.click_cashwithdrawal())
+        self.b1 = Button(text="Tarik Tunai", bg='#026AA7', command=lambda: self.click_cashwithdrawal())
         self.b1.place(
             x=140.0,
             y=355.0,
