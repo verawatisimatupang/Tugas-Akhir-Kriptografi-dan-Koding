@@ -46,8 +46,8 @@ class RegisterPage(Tk.Frame):
 
         self.entry_1 = Entry(
             bd=0,
-            bg="#FA8072",
-            fg="#FFFFFF",
+            bg="#BCD9EA",
+            fg="#000000",
             highlightthickness=0,
             insertbackground = "#000000",
             font=("MontserratRoman SemiBold", 12 * -1)
@@ -70,8 +70,8 @@ class RegisterPage(Tk.Frame):
 
         self.entry_2 = Entry(
             bd=0,
-            bg="#FA8072",
-            fg="#FFFFFF",
+            bg="#BCD9EA",
+            fg="#000000",
             highlightthickness=0,
             insertbackground = "#000000",
             font=("MontserratRoman SemiBold", 12 * -1)
@@ -94,8 +94,8 @@ class RegisterPage(Tk.Frame):
 
         self.entry_3 = Entry(
             bd=0,
-            bg="#FA8072",
-            fg="#FFFFFF",
+            bg="#BCD9EA",
+            fg="#000000",
             highlightthickness=0,
             insertbackground = "#000000",
             font=("MontserratRoman SemiBold", 12 * -1)
@@ -118,8 +118,8 @@ class RegisterPage(Tk.Frame):
 
         self.entry_4 = Entry(
             bd=0,
-            bg="#FA8072",
-            fg="#FFFFFF",
+            bg="#BCD9EA",
+            fg="#000000",
             highlightthickness=0,
             insertbackground = "#000000",
             font=("MontserratRoman SemiBold", 12 * -1),
@@ -143,8 +143,8 @@ class RegisterPage(Tk.Frame):
 
         self.entry_5 = Entry(
             bd=0,
-            bg="#FA8072",
-            fg="#FFFFFF",
+            bg="#BCD9EA",
+            fg="#000000",
             highlightthickness=0,
             insertbackground = "#000000",
             font=("MontserratRoman SemiBold", 12 * -1),
@@ -157,9 +157,9 @@ class RegisterPage(Tk.Frame):
             height=30.0
         )
 
-        self.b1 = Button(text="Register", bg='#FA8072', command=self.registration_done)
+        self.b1 = Button(text="Register", bg='#026AA7', command=self.registration_done)
         self.b1.place(
-            x=150.0,
+            x=140.0,
             y=480.0,
             width=120.0,
             height=40.0
@@ -201,39 +201,68 @@ class RegisterPage(Tk.Frame):
                 password="postgres",
                 port=5432
             )
-            
             cursor = connection.cursor()
             email_pattern = r"[^@]+@[^@]+\.[^@]+"
-
-            if not self.entry_1.get().isdigit():
+            username_pattern = r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$"
+            password_pattern = r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$"
+            if self.entry_1.get() == "" or self.entry_2.get() == "" or self.entry_3.get() == "" or self.entry_4.get() == "" or self.entry_5.get() == "":
+                messagebox.showerror("Error", "Tolong isi semua input")
+            elif not self.entry_1.get().isdigit():
                 messagebox.showerror("Error", "Nomor rekening harus berupa angka")
             elif not re.match(email_pattern, self.entry_2.get()):
                 messagebox.showerror("Error", "Email tidak valid")
+            elif not re.match(username_pattern, self.entry_3.get()):  # Memeriksa username
+                messagebox.showerror("Error", "Username harus memiliki setidaknya satu huruf kecil, satu huruf besar, dan satu angka")
+            elif not re.match(password_pattern, self.entry_4.get()):  # Memeriksa password
+                messagebox.showerror("Error", "Password harus memiliki setidaknya satu huruf kecil, satu huruf besar, dan satu angka")
             elif len(self.entry_5.get()) != 6:
                 messagebox.showerror("Error", "PIN harus terdiri dari 6 digit")
-            elif self.entry_1.get() == "" or self.entry_2.get() == "" or self.entry_3.get() == "" or self.entry_4.get() == "" or self.entry_5.get() == "":
-                messagebox.showerror("Error", "Tolong isi semua input")
+            elif not self.entry_5.get().isdigit():
+                messagebox.showerror("Error", "PIN harus berupa angka")
             else:
-                query = "INSERT INTO datapengguna (nomor_rekening, email, username, password, pin, otp, register_time) VALUES (%s, %s, %s, %s, %s, %s, %s)"
-                values = (
+                check_nomor_rekening_query = "SELECT * FROM datapengguna WHERE nomor_rekening = %s"
+                values_check_nomor_rekening = (
                     self.entry_1.get(),
-                    self.entry_2.get(),
-                    self.entry_3.get(),
-                    self.entry_4.get(),
-                    self.entry_5.get(),
-                    self.generate_otp(),
-                    self.get_register_time()
                 )
-                
-                cursor.execute(query, values)
-                connection.commit()
-                
-                self.clear()
-                messagebox.showinfo("Success", "Your OTP is " + str(values[5]) + ". Please input OTP in 5 minutes")
-                self.origin.VerifyRegisterOtp()
-                cursor.close()
-                connection.close()
-
+                cursor.execute(check_nomor_rekening_query, values_check_nomor_rekening)
+                result_check_nomor_rekening = cursor.fetchone()
+                check_email_query = "SELECT * FROM datapengguna WHERE email = %s"
+                values_check_email = (
+                    self.entry_2.get(),
+                )
+                cursor.execute(check_email_query, values_check_email)
+                result_check_email = cursor.fetchone()
+                check_username_query = "SELECT * FROM datapengguna WHERE username = %s"
+                values_check_username = (
+                    self.entry_3.get(),
+                )
+                cursor.execute(check_username_query, values_check_username)
+                result_check_username = cursor.fetchone()
+                if result_check_nomor_rekening is not None:
+                    messagebox.showerror("Error", "Nomor rekening sudah pernah digunakan")
+                elif result_check_email is not None:
+                    messagebox.showerror("Error", "Email sudah pernah digunakan")
+                elif result_check_username is not None:
+                    messagebox.showerror("Error", "Username sudah pernah digunakan")
+                else :
+                    query = "INSERT INTO datapengguna (nomor_rekening, email, username, password, pin, otp, register_time) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+                    values = (
+                        self.entry_1.get(),
+                        self.entry_2.get(),
+                        self.entry_3.get(),
+                        self.entry_4.get(),
+                        self.entry_5.get(),
+                        self.generate_otp(),
+                        self.get_register_time()
+                    )
+                    cursor.execute(query, values)
+                    connection.commit()
+                    
+                    self.clear()
+                    messagebox.showinfo("Success", "Your OTP is " + str(values[5]) + ". Please input OTP in 5 minutes")
+                    self.origin.VerifyRegisterOtp()
+                    cursor.close()
+                    connection.close()
         except (Exception, psycopg2.Error) as error:
             print("Error while connecting to PostgreSQL", error)
             messagebox.showerror("Error", "An error occurred while saving data to the database")
