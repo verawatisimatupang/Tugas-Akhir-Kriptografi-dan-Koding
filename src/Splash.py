@@ -48,21 +48,17 @@ class SplashPage(Tk.Frame):
             font=("MontserratRoman SemiBold", 14 * -1)
         )
 
-        # Open and resize the image
         image_path = relative_to_assets("splash.png")
         image = Image.open(image_path)
         resized_image = image.resize((300, 200))  # Adjust the desired width and height
-
-        # Convert the resized image to a format compatible with Tkinter
         self.image_splash = ImageTk.PhotoImage(resized_image)
-
         self.splash = self.canvas.create_image(
             200.0,
             230.0,
             image=self.image_splash
         )
 
-        self.b1 = Button(text="Punya Akun", bg='#FA8072', command=lambda: self.click_login())
+        self.b1 = Button(text="Punya Akun", bg='#026AA7', command=lambda: self.click_login())
         self.b1.place(
             x=140.0,
             y=355.0,
