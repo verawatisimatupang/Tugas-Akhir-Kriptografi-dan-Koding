@@ -1,6 +1,5 @@
 from pathlib import Path
-import re
-from tkinter import Checkbutton, Tk, Canvas, Button, Entry, messagebox
+from tkinter import END, Checkbutton, Tk, Canvas, Button, Entry, messagebox
 import tkinter as Tk
 from PIL import Image, ImageTk
 import psycopg2
@@ -41,15 +40,11 @@ class LoginPage(Tk.Frame):
             fill="#000000",
             font=("MontserratRoman SemiBold", 30 * -1)
         )
-
-        # Open and resize the image
+        
         image_path = relative_to_assets("login.png")
         image = Image.open(image_path)
         resized_image = image.resize((300, 200))  # Adjust the desired width and height
-
-        # Convert the resized image to a format compatible with Tkinter
         self.image_login = ImageTk.PhotoImage(resized_image)
-
         self.login = self.canvas.create_image(
             200.0,
             180.0,
@@ -67,8 +62,8 @@ class LoginPage(Tk.Frame):
 
         self.entry_1 = Entry(
             bd=0,
-            bg="#FA8072",
-            fg="#FFFFFF",
+            bg="#BCD9EA",
+            fg="#000000",
             highlightthickness=0,
             insertbackground = "#000000",
             font=("MontserratRoman SemiBold", 12 * -1)
@@ -91,8 +86,8 @@ class LoginPage(Tk.Frame):
 
         self.entry_2 = Entry(
             bd=0,
-            bg="#FA8072",
-            fg="#FFFFFF",
+            bg="#BCD9EA",
+            fg="#000000",
             highlightthickness=0,
             insertbackground = "#000000",
             font=("MontserratRoman SemiBold", 12 * -1),
@@ -105,9 +100,9 @@ class LoginPage(Tk.Frame):
             height=30.0
         )
 
-        self.b1 = Button(text="Login", bg='#FA8072',command=self.login_done)
+        self.b1 = Button(text="Login", bg='#026AA7',command=self.login_done)
         self.b1.place(
-            x=150.0,
+            x=140.0,
             y=480.0,
             width=120.0,
             height=40.0
@@ -136,17 +131,12 @@ class LoginPage(Tk.Frame):
             )
             
             cursor = connection.cursor()
-            email_pattern = r"[^@]+@[^@]+\.[^@]+"
-
-            if not re.match(email_pattern, self.entry_2.get()):
-                messagebox.showerror("Error", "Email tidak valid")
-            elif self.entry_1.get() == "" or self.entry_2.get() == "":
+            if self.entry_1.get() == "" or self.entry_2.get() == "":
                 messagebox.showerror("Error", "Tolong isi semua input")
+                self.clear()
             else:
                 cursor.execute("SELECT * FROM datapengguna WHERE username = %s AND password = %s", (self.entry_1.get(), self.entry_2.get()))
-
                 user = cursor.fetchone()
-
                 if user:
                     query = "INSERT INTO datalogin (username, password, login_time) VALUES (%s, %s, %s)"
                     values = (
@@ -159,10 +149,14 @@ class LoginPage(Tk.Frame):
                     self.origin.Home()
                 else:
                     messagebox.showerror("Error", "Invalid username or password")
-
+                    self.clear()
         except (Exception, psycopg2.Error) as error:
             print("Error while connecting to PostgreSQL", error)
             messagebox.showerror("Error", "An error occurred while saving data to the database")
+
+    def clear (self):
+        self.entry_1.delete(0, END)
+        self.entry_2.delete(0, END)
 
     def startPage(self):
         self.mainloop()
