@@ -223,7 +223,7 @@ class CashWithdrawalPage(Tk.Frame):
                 if current_time < otp_time + timedelta(minutes=5) :
                     self.origin.Home()
                 elif current_time > otp_time + timedelta(minutes=5) :
-                    messagebox.showwarning("Times Up", "Registration failed")
+                    messagebox.showwarning("Times Up", "The OTP is expired")
                     delete_query = f"DELETE FROM datatransaksi where username = '{self.get_logged_in_account()}'"
                     cursor.execute(delete_query)
                     connection.commit()
