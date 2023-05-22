@@ -24,7 +24,44 @@ Aplikasi desktop mobile banking sederhana dengan mengimplementasikan SHA-3 untuk
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ### Cara Menjalankan Aplikasi
-1. Dijalankan melalui file Main.py atau run di cmd yaitu
+1. Buat database datapengguna
+```sh
+  CREATE DATABASE datapengguna;
+);
+  ```
+3. Buat tabel datalogin, datapengguna, dan datatransaksi
+```sh
+  CREATE TABLE datapengguna (
+  nomor_rekening VARCHAR(355),
+  email VARCHAR(355),
+  username VARCHAR(355),
+  password VARCHAR(355),
+  pin VARCHAR(50),
+  otp VARCHAR(50),
+  register_time TIMESTAMP
+);
+  ```
+  
+```sh
+  CREATE TABLE datalogin (
+  username VARCHAR(355),
+  password VARCHAR(355),
+  login_time TIMESTAMP
+);
+  ```
+
+```sh
+  CREATE TABLE datatransaksi (
+  username VARCHAR(355),
+  nomor_rekening VARCHAR(355),
+  jalur_tarik_tunai VARCHAR(355),
+  nominal VARCHAR(355),
+  pin VARCHAR(355),
+  otp VARCHAR(355),
+  cashwithdrawal_time TIMESTAMP
+);
+  ```
+3. Dijalankan melalui file Main.py atau run di cmd yaitu
 ```sh
   python Main.py
   ```
