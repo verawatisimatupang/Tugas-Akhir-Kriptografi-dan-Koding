@@ -27,7 +27,6 @@ Aplikasi desktop mobile banking sederhana dengan mengimplementasikan SHA-3 untuk
 1. Buat database datapengguna
 ```sh
   CREATE DATABASE datapengguna;
-);
   ```
 3. Buat tabel datalogin, datapengguna, dan datatransaksi
 ```sh
