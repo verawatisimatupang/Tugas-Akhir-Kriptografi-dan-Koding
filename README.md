@@ -8,6 +8,7 @@ Daftar Isi
     <li><a href="#nama">Nama</a></li>
     <li><a href="#spesifikasi">Spesifikasi</a></li>
     <li><a href="#cara-menjalankan-aplikasi">Cara Menjalankan Aplikasi</a></li>
+    <li><a href="#referensi-img">Referensi Img</a></li>
   </ol>
  
  <!-- Nama -->
@@ -23,7 +24,8 @@ Aplikasi desktop mobile banking sederhana dengan mengimplementasikan SHA-3 untuk
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-### Cara Menjalankan Aplikasi
+<!-- Cara Menjalankan Aplikasi -->
+## Cara Menjalankan Aplikasi
 1. Buat database datapengguna
 ```sh
   CREATE DATABASE datapengguna;
@@ -64,4 +66,24 @@ Aplikasi desktop mobile banking sederhana dengan mengimplementasikan SHA-3 untuk
 ```sh
   python Main.py
   ```
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+## Referensi Img
+<!-- Referensi Img -->
+1. login.png
+ ```sh
+  https://www.freepik.com/premium-vector/online-registration-sign-up-concept-with-man-character_10312229.htm#&position=26&from_view=search&track=ais
+```
+2. otp.png
+```sh
+  https://www.freepik.com/free-vector/cloud-computing-security-abstract-concept-illustration_11668583.htm#&position=0&from_view=search&track=ais
+```
+3. saving.png
+```sh
+  https://www.freepik.com/free-vector/finances-management-budget-assessment-financial-literacy-accounting-idea-financier-with-cash-economist-holding-golden-coin-cartoon-character_11667044.htm#&position=0&from_view=search&track=ais
+```
+4. splash.png
+ ```sh
+  https://www.freepik.com/free-vector/money-income-attraction_9176032.htm#&position=0&from_view=search&track=ais
+```
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
